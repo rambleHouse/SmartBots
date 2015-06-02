@@ -20,8 +20,9 @@ public class Food : MonoBehaviour
 	{
 		if(Energy < EnergyTransferRate * Time.deltaTime)
 		{
+			float finalEnergy = Energy;
 			die ();
-			return Energy;
+			return finalEnergy;
 		}
 		Energy -= EnergyTransferRate * Time.deltaTime;
 		return EnergyTransferRate * Time.deltaTime;

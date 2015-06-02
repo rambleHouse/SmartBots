@@ -10,7 +10,7 @@ public class PlayField : MonoBehaviour
 	
 	public Vector2 GetRandomPosition()
 	{
-		return new Vector2(Random.Range(EastBorder, WestBorder), Random.Range(SouthBorder, NorthBorder));
+		return new Vector2(Random.Range(-10f, 10f), Random.Range(-10f, 10f));
 	}
 
 	public bool IsWithinBorders(Vector2 position)

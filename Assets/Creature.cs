@@ -108,11 +108,11 @@ public class Creature : MonoBehaviour
 
 		Creature father = selectParent();
 		Creature mother = selectParent();
-//		while(father == mother)
-//		{
-//			mother = selectParent();
-//		}
-		//this.Brain.SpawnBrainFromParents(father.Brain, mother.Brain);
+		while(father == mother)
+		{
+			mother = selectParent();
+		}
+		this.Brain.SpawnBrainFromParents(father.Brain, mother.Brain);
 	}
 
 	private Creature selectParent()
@@ -120,16 +120,16 @@ public class Creature : MonoBehaviour
 		float totalEnergy = 0f;
 		foreach(Creature eligibleParent in otherCreatures)
 		{
-			totalEnergy += eligibleParent.Energy;
+			totalEnergy += (eligibleParent.Energy + eligibleParent.Age);
 		}
 
 		float randomSelection = UnityEngine.Random.Range(0f, totalEnergy);
 		totalEnergy = 0f;
 		foreach(Creature eligibleParent in otherCreatures)
 		{
-			if(totalEnergy < randomSelection && totalEnergy + eligibleParent.Energy >= randomSelection)
+			if(totalEnergy < randomSelection && totalEnergy + (eligibleParent.Energy + eligibleParent.Age) >= randomSelection)
 				return eligibleParent;
-			totalEnergy += eligibleParent.Energy;
+			totalEnergy += (eligibleParent.Energy + eligibleParent.Age);
 		}
 		Debug.LogError("Something Went Wrong Selecting a Parent");
 		return null;

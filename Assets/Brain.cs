@@ -20,19 +20,19 @@ public class Brain
 
 	public List<Neuron> StandardInputNeurons{get; set;}
 
-	public List<PeerInputNeuronSet> PeerInputNeurons{get; set;}
+	//public List<PeerInputNeuronSet> PeerInputNeurons{get; set;}
 
 	private Neuron TurnEffortOutputNeuron = new Neuron();
 	private Neuron MoveEffortOutputNeuron = new Neuron();
 
 	public Brain(int numberOfPeers)
 	{
-		int inputNodeCount = 12 + (numberOfPeers * 4); //there are 12 standard input nodes
+		int inputNodeCount = 2; //there are 12 standard input nodes
 
 		StandardInputNeurons = new List<Neuron>();
-		PeerInputNeurons = new List<PeerInputNeuronSet>();
+		//PeerInputNeurons = new List<PeerInputNeuronSet>();
 
-		for(int i = 0; i < 12; i++)
+		for(int i = 0; i < 2; i++)
 		{
 			Neuron newNeuron = new Neuron();
 			newNeuron.AddConnection(TurnEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
@@ -40,69 +40,74 @@ public class Brain
 			StandardInputNeurons.Add(newNeuron);
 		}
 
-		for(int i = 0; i < numberOfPeers; i++)
-		{
-			PeerInputNeuronSet newSet = new PeerInputNeuronSet();
-			newSet.HeadingInputNeuron.AddConnection(TurnEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
-			newSet.HeadingInputNeuron.AddConnection(MoveEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
-			newSet.BearingInputNeuron.AddConnection(TurnEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
-			newSet.BearingInputNeuron.AddConnection(MoveEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
-			newSet.DistanceInputNeuron.AddConnection(TurnEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
-			newSet.DistanceInputNeuron.AddConnection(MoveEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
-			newSet.EnergyInputNeuron.AddConnection(TurnEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
-			newSet.EnergyInputNeuron.AddConnection(MoveEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
-			PeerInputNeurons.Add(newSet);
-		}
+//		for(int i = 0; i < numberOfPeers; i++)
+//		{
+//			PeerInputNeuronSet newSet = new PeerInputNeuronSet();
+//			newSet.HeadingInputNeuron.AddConnection(TurnEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
+//			newSet.HeadingInputNeuron.AddConnection(MoveEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
+//			newSet.BearingInputNeuron.AddConnection(TurnEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
+//			newSet.BearingInputNeuron.AddConnection(MoveEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
+//			newSet.DistanceInputNeuron.AddConnection(TurnEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
+//			newSet.DistanceInputNeuron.AddConnection(MoveEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
+//			newSet.EnergyInputNeuron.AddConnection(TurnEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
+//			newSet.EnergyInputNeuron.AddConnection(MoveEffortOutputNeuron, UnityEngine.Random.Range(-(float)inputNodeCount, (float)inputNodeCount));
+//			PeerInputNeurons.Add(newSet);
+//		}
 	}
 
 	public void SpawnBrainFromParents(Brain fatherBrain, Brain motherBrain)
 	{
-		for(int i = 0; i <= 12; i++)
+		for(int i = 0; i < 2; i++)
 		{
 			StandardInputNeurons[i].MergeWeights(fatherBrain.StandardInputNeurons[i], motherBrain.StandardInputNeurons[i]);
 		}
 
-		for(int i = 0; i < PeerInputNeurons.Count; i++)
+		if(UnityEngine.Random.Range(0, 50) == 1)
 		{
-			PeerInputNeurons[i].MergeNeuronSets(fatherBrain.PeerInputNeurons[i], motherBrain.PeerInputNeurons[i]);
+			StandardInputNeurons[UnityEngine.Random.Range(0, StandardInputNeurons.Count)].Mutate(UnityEngine.Random.Range(-6f, 6f));
 		}
+
+//		for(int i = 0; i < PeerInputNeurons.Count; i++)
+//		{
+//			PeerInputNeurons[i].MergeNeuronSets(fatherBrain.PeerInputNeurons[i], motherBrain.PeerInputNeurons[i]);
+//		}
 	}
 
 	public Decision Decide(Vector2 position, float heading, PlayField playField, float energy, float age, float foodBearing, float foodDistance, float foodEnergy, List<Peer> peers)
 	{
-		StandardInputNeurons[0].SubmitInput(HTan.getHTan(position.x));
-		StandardInputNeurons[1].SubmitInput(HTan.getHTan(position.y));
-		StandardInputNeurons[2].SubmitInput(HTan.getHTan(heading));
-		StandardInputNeurons[3].SubmitInput(HTan.getHTan(playField.NorthBorder));
-		StandardInputNeurons[4].SubmitInput(HTan.getHTan(playField.SouthBorder));
-		StandardInputNeurons[5].SubmitInput(HTan.getHTan(playField.EastBorder));
-		StandardInputNeurons[6].SubmitInput(HTan.getHTan(playField.WestBorder));
-		StandardInputNeurons[7].SubmitInput(HTan.getHTan(energy));
-		StandardInputNeurons[8].SubmitInput(HTan.getHTan(age));
-		StandardInputNeurons[9].SubmitInput(HTan.getHTan(foodBearing));
-		StandardInputNeurons[10].SubmitInput(HTan.getHTan(foodDistance));
-		StandardInputNeurons[11].SubmitInput(HTan.getHTan(foodEnergy));
+//		StandardInputNeurons[0].SubmitInput(HTan.getHTan(position.x));
+//		StandardInputNeurons[1].SubmitInput(HTan.getHTan(position.y));
+//		StandardInputNeurons[2].SubmitInput(HTan.getHTan(heading));
+//		StandardInputNeurons[3].SubmitInput(HTan.getHTan(playField.NorthBorder));
+//		StandardInputNeurons[4].SubmitInput(HTan.getHTan(playField.SouthBorder));
+//		StandardInputNeurons[5].SubmitInput(HTan.getHTan(playField.EastBorder));
+//		StandardInputNeurons[6].SubmitInput(HTan.getHTan(playField.WestBorder));
+//		StandardInputNeurons[7].SubmitInput(HTan.getHTan(energy));
+//		StandardInputNeurons[8].SubmitInput(HTan.getHTan(age));
+		StandardInputNeurons[0].SubmitInput(HTan.getHTan(foodBearing));
+		StandardInputNeurons[1].SubmitInput(HTan.getHTan(foodDistance));
+//		StandardInputNeurons[5].SubmitInput(HTan.getHTan(foodEnergy));
 
-		for(int i = 0; i < PeerInputNeurons.Count; i++)
-		{
-			PeerInputNeurons[1].HeadingInputNeuron.SubmitInput(HTan.getHTan(peers[i].Heading));
-			PeerInputNeurons[1].BearingInputNeuron.SubmitInput(HTan.getHTan(peers[i].Bearing));
-			PeerInputNeurons[1].DistanceInputNeuron.SubmitInput(HTan.getHTan(peers[i].Distance));
-			PeerInputNeurons[1].EnergyInputNeuron.SubmitInput(HTan.getHTan(peers[i].Energy));
-		}
+//		for(int i = 0; i < PeerInputNeurons.Count; i++)
+//		{
+//			PeerInputNeurons[1].HeadingInputNeuron.SubmitInput(HTan.getHTan(peers[i].Heading));
+//			PeerInputNeurons[1].BearingInputNeuron.SubmitInput(HTan.getHTan(peers[i].Bearing));
+//			PeerInputNeurons[1].DistanceInputNeuron.SubmitInput(HTan.getHTan(peers[i].Distance));
+//			PeerInputNeurons[1].EnergyInputNeuron.SubmitInput(HTan.getHTan(peers[i].Energy));
+//		}
 
 		foreach(Neuron neuron in StandardInputNeurons)
 		{
 			neuron.SendOutput();
 		}
 
-		foreach(PeerInputNeuronSet neuronSet in PeerInputNeurons)
-		{
-			neuronSet.HeadingInputNeuron.SendOutput();
-			neuronSet.BearingInputNeuron.SendOutput();
-			neuronSet.DistanceInputNeuron.SendOutput();
-			neuronSet.EnergyInputNeuron.SendOutput();
-		}
+//		foreach(PeerInputNeuronSet neuronSet in PeerInputNeurons)
+//		{
+//			neuronSet.HeadingInputNeuron.SendOutput();
+//			neuronSet.BearingInputNeuron.SendOutput();
+//			neuronSet.DistanceInputNeuron.SendOutput();
+//			neuronSet.EnergyInputNeuron.SendOutput();
+//		}
 
 		return new Decision(HTan.getHTan(TurnEffortOutputNeuron.ExtractOutput()), HTan.getHTan(MoveEffortOutputNeuron.ExtractOutput()));
 	}
@@ -205,6 +210,11 @@ public class Neuron
 		{
 			neuronConnections[i].Weight = (fatherNeuron.neuronConnections[i].Weight + motherNeuron.neuronConnections[i].Weight) / 2;
 		}
+	}
+
+	public void Mutate(float randomWeight)
+	{
+		neuronConnections[UnityEngine.Random.Range(0, neuronConnections.Count)].Weight = randomWeight;
 	}
 }
 
